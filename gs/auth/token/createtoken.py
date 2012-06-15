@@ -40,7 +40,7 @@ def add_token_to_db(table, token):
     i = table.insert(data)
     i.execute()
 
-if __name__ == '__main__':
+def main():
     p = ArgumentParser(description='Generate and add a token to the database.')
     p.add_argument('dbName', metavar='databaseName',
                    help='The name of the database to connect to.')
@@ -68,3 +68,6 @@ if __name__ == '__main__':
     args.verbose and stdout.write('Adding the new token to the database,\n')
     add_token_to_db(table, token)
     args.verbose and stdout.write('Finished.\n')
+
+if __name__ == '__main__':
+    main()

@@ -35,7 +35,9 @@ setup(name='gs.auth.token',
         'gs.option',
         # -*- Extra requirements: -*-
     ],
-    entry_points="""
-    # -*- Entry points: -*-
-    """,
+    entry_points={
+        'console_scripts': [
+            'gs_auth_token_create = gs.auth.token.createtoken:main',
+            ],
+        },
 )
