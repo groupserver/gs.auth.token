@@ -7,7 +7,7 @@ from authtoken import AuthenticationTokenMismatch
 def log_auth_error(context, request, errors):
     assert context
     assert request
-    authError = reduce(or_, [isinstance(e[2],AuthenticationTokenMismatch) 
+    authError = reduce(or_, [isinstance(e[2], AuthenticationTokenMismatch) 
                              for e in errors], 
                        False)
     if authError:
