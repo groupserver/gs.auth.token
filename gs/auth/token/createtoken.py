@@ -5,7 +5,7 @@ from random import SystemRandom
 from string import printable
 from sys import argv, stdout
 
-from sqlalchemy import create_engine, BoundMetaData, Table
+from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.sql import and_
 
 B62_ALPHABET = printable[:62]
@@ -53,10 +53,11 @@ def main():
     args = p.parse_args()
     
     dbconn = 'postgres://%s@%s/%s' % (args.dbUser, args.host, args.dbName)
-    args.verbose and stdout.write('Connecting to <%s>,\n' % dbconn)
+    args.verbose and stdout.write('Creating the engine <%s>,\n' % dbconn)
     engine = create_engine(dbconn, echo=False)
-    args.verbose and stdout.write('Binding to the metadata,\n')
-    metadata = BoundMetaData(engine)
+    args.verbose and stdout.write('Connecting the engine')
+    connection = engine.connect()
+    metadata = MetaData()
     args.verbose and stdout.write('Creating the table,\n')
     table = Table('option', metadata, autoload=True)
 
