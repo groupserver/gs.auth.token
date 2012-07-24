@@ -33,6 +33,7 @@ setup(name='gs.auth.token',
     install_requires=[
         'setuptools',
         'gs.option',
+        'Products.GSAuditTrail',
         # -*- Extra requirements: -*-
     ],
     entry_points={
