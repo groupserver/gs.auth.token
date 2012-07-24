@@ -3,10 +3,16 @@ from argparse import ArgumentParser
 from md5 import new as new_md5
 from random import SystemRandom
 from string import printable
-from sys import argv, stdout
-
+import sys
 from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy.exc import OperationalError, ArgumentError
 from sqlalchemy.sql import and_
+
+exit_vals = {
+    'success':             0,
+    'db_create_engine':   10,
+    'db_connect':         11,
+}
 
 B62_ALPHABET = printable[:62]
 def convert_int2b62(num, converted=[]):
@@ -41,34 +47,47 @@ def add_token_to_db(table, token):
     i.execute()
 
 def main():
-    p = ArgumentParser(description='Generate and add a token to the database.')
-    p.add_argument('dbName', metavar='databaseName',
-                   help='The name of the database to connect to.')
-    p.add_argument('dbUser', metavar='databaseUser',
-                   help='The user to connect to the database as.')
-    p.add_argument('-o', '--host', metavar='host', default='localhost',
-                   help='The host to connect to (default "localhost").')
-    p.add_argument('-v', '--verbose', action='store_true',
-                   help='Turn on verbose output.')
+    d = 'Generate a new authentication token, and add it to the database.'
+    e = 'Running this script will invalidate all the existing tokens used to '\
+        'authenticate the scripts, such as "smtp2gs". The configuration for '\
+        'these scripts will have to be manually updated.'
+    p = ArgumentParser(description=d, epilog=e)
+    p.add_argument('dsn', metavar='dsn', 
+                   help='The data source name (DSN) in the form '\
+                       '"postgres://user:password@host:port/database_name".')
     args = p.parse_args()
-    
-    dbconn = 'postgres://%s@%s/%s' % (args.dbUser, args.host, args.dbName)
-    args.verbose and stdout.write('Creating the engine <%s>,\n' % dbconn)
-    engine = create_engine(dbconn, echo=False)
-    args.verbose and stdout.write('Connecting the engine')
-    connection = engine.connect()
+    try:
+        engine = create_engine(args.dsn, echo=False)
+    except ArgumentError, ae:
+        m = u'%s: Could not create the token because of an error connecting\n'\
+            u'to the database:\n%s\n\nPlease check the DSN and try again.' %\
+            (p.prog, ae.message)
+        m = m.replace(u'\n', u'\n%s: ' % p.prog) + '\n'
+        sys.stderr.write(m)
+        sys.exit(exit_vals['db_create_engine'])
+        
+    try:
+        connection = engine.connect()
+    except OperationalError, oe:
+        m = u'%s: Could not create the token because of an error connecting\n'\
+            u'to the database:\n%s\n Please check the DSN and try again.' % \
+            (p.prog, oe.orig.message.replace('FATAL: ', ''),)
+        m = m.replace('\n', '\n%s: ' % p.prog) + '\n'
+        sys.stderr.write(m.encode('utf-8', 'ignore'))
+        sys.exit(exit_vals['db_connect'])
     metadata = MetaData()
-    args.verbose and stdout.write('Creating the table,\n')
+    metadata.bind=engine
     table = Table('option', metadata, autoload=True)
 
-    args.verbose and stdout.write('Deleting the old tokens,\n')
     delete_old_tokens_from_db(table)
 
-    args.verbose and stdout.write('Creating the new token,\n')
     token = create_token()
-    args.verbose and stdout.write('Adding the new token to the database,\n')
     add_token_to_db(table, token)
-    args.verbose and stdout.write('Finished.\n')
+
+    m = u'The authentication token has been changed to the following:\n    '\
+        u'%s\n\nPlease update the relevant configuration files.\n' % (token,)
+    sys.stdout.write(m.encode('utf-8', 'ignore'))
+    sys.exit(exit_vals['success'])
 
 if __name__ == '__main__':
     main()
