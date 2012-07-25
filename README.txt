@@ -13,26 +13,30 @@ system:
 * GroupServer checks the token with the one in the database, and throws a
   validation-error if they do not match.
 
+The scripts that use this product usually require `authentication
+configuration`_.
+
 Create a Token
 ==============
 
 The console-script ``gs_auth_token_create`` creates a new token and adds it
-to the relational database. It can be run at any time to crate a new token.
+to the relational database. Once run it is necessary to change the
+`authentication configuration`_.
 
 Synopsis
 --------
 ::
 
-   gs_auth_token_create [-h] [-o host] [-v] databaseName databaseUser
+   gs_auth_token_create [-h] dsn
 
 Arguments
 ---------
 
-``databaseName``
-  The name of the database to connect to.
-
-``databaseUser``
-  The user to connect to the database as.
+``dsn``:
+  The data source name (DSN) in the form
+  ``postgres://user:password@host:port/database_name``. The configuration
+  file for GroupServer (normally ``etc/gsconfig.ini``) lists all the DSN
+  entries for the system.
 
 
 Optional Arguments
@@ -41,11 +45,20 @@ Optional Arguments
 ``-h``, ``--help``
   Print the help message and exit.
 
-``-o``, ``--host``
-  The host to connect to (defaults to ``localhost``).
 
-``-v``, ``--verbose``
-  Turn on verbose output.
+Examples
+~~~~~~~~
+
+Generate a new token and place it in the ``production`` database. In this
+example PostgreSQL is running on the local machine, and has as been set up
+so authentication is unnecessary::
+
+   gs_auth_token_create posgres://localhost/production
+
+Generate a new token and place it in the ``testing`` database on a remote
+machine. Authentication is used::
+
+   gs_auth_token_create posgres://remoteUser:password@remote.machine.name/testing
 
 Add Authentication to a Form
 ============================
@@ -84,6 +97,22 @@ This utility will check for the ``AuthenticationTokenMismatch`` error in the
 list of ``errors``. If present it will add an audit-event to the audit-trail
 table.
 
+Authentication Configuration
+============================
+
+The script that requires authentication may be running on a machine that is
+separate to the GroupServer system, which may use a database that is on a
+third machine! Because of this the **scripts** rarely read the
+authentication token from the relational database. Instead they typically
+use a configuration file for storing the token. See the documentation for
+``smtp2gs`` for more examples [#smtp2gs]_.
+
+The script to `create a token`_ does not change these configuration
+files. Instead it displays the new token and the administrator must change
+the entries in the configuration.
+
 .. [#formlib] GroupServer uses ``zope.formlib`` for most of its forms: 
    <http://docs.zope.org/zope.formlib/>.
+.. [#smtp2gs] See ``gs.group.messages.add.smtp2gs`` 
+            <https://source.iopen.net/groupserver/gs.group.messages.add.smtp2gs/summary>
 .. _GroupServer: http://groupserver.org/
