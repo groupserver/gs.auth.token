@@ -1,6 +1,5 @@
 # coding=utf-8
 from argparse import ArgumentParser
-from md5 import new as new_md5
 from random import SystemRandom
 from string import printable
 import sys
@@ -14,6 +13,7 @@ exit_vals = {
     'db_connect':         11,
 }
 
+
 B62_ALPHABET = printable[:62]
 def convert_int2b62(num, converted=[]):
     mod = num % 62
@@ -25,26 +25,32 @@ def convert_int2b62(num, converted=[]):
     retval = ''.join(converted)
     return retval
 
+
 def create_token():
     randomNumberGenerator = SystemRandom()
-    randomInteger = randomNumberGenerator.randint(0, 62**32)
+    randomInteger = randomNumberGenerator.randint(0, 62 ** 32)
     token = convert_int2b62(randomInteger)
     return token
 
+
 def delete_old_tokens_from_db(table):
-    d = table.delete(and_(table.c.component_id == 'gs.auth.token', 
+    d = table.delete(and_(table.c.component_id == 'gs.auth.token',
                           table.c.option_id == 'authToken'))
     d.execute()
 
+
 def add_token_to_db(table, token):
     data = {
+        #lint:disable
         'component_id': 'gs.auth.token',
         'option_id':    'authToken',
         'site_id':      '',
         'group_id':     '',
         'value':        token,}
+        #lint:enable
     i = table.insert(data)
     i.execute()
+
 
 def main():
     d = 'Generate a new authentication token, and add it to the database.'
@@ -52,7 +58,7 @@ def main():
         'authenticate the scripts, such as "smtp2gs". The configuration for '\
         'these scripts will have to be manually updated.'
     p = ArgumentParser(description=d, epilog=e)
-    p.add_argument('dsn', metavar='dsn', 
+    p.add_argument('dsn', metavar='dsn',
                    help='The data source name (DSN) in the form '\
                        '"postgres://user:password@host:port/database_name".')
     args = p.parse_args()
@@ -65,9 +71,9 @@ def main():
         m = m.replace(u'\n', u'\n%s: ' % p.prog) + '\n'
         sys.stderr.write(m)
         sys.exit(exit_vals['db_create_engine'])
-        
+
     try:
-        connection = engine.connect()
+        connection = engine.connect()  # lint:ok
     except OperationalError, oe:
         m = u'%s: Could not create the token because of an error connecting\n'\
             u'to the database:\n%s\n Please check the DSN and try again.' % \
@@ -76,7 +82,7 @@ def main():
         sys.stderr.write(m.encode('utf-8', 'ignore'))
         sys.exit(exit_vals['db_connect'])
     metadata = MetaData()
-    metadata.bind=engine
+    metadata.bind = engine
     table = Table('option', metadata, autoload=True)
 
     delete_old_tokens_from_db(table)
