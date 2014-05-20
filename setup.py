@@ -12,11 +12,12 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+from __future__ import absolute_import, unicode_literals
 import codecs
 import os
 import sys
 from setuptools import setup, find_packages
-from version import get_version
+from .version import get_version
 
 version = get_version()
 
@@ -32,7 +33,7 @@ requires = [
         'zope.schema',
         'gs.core',
         'gs.option',
-        'Products.GSAuditTrail', ],
+        'Products.GSAuditTrail', ]
 
 if (sys.version_info < (3, 4)):
     requires += ['setuptools']
@@ -52,7 +53,7 @@ setup(name='gs.auth.token',
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    keywords='authentication token database',
+    keywords='authentication, token, database',
     author='Michael JasonSmith',
     author_email='mpj17@onlinegroups.net',
     url='https://source.iopen.net/groupserver/gs.auth.token/',
@@ -67,4 +68,6 @@ setup(name='gs.auth.token',
             'gs_auth_token_create = gs.auth.token.createtoken:main',
             ],
         },
+    test_suite="gs.auth.token.tests.test_all",
+    tests_require=['mock', ],
 )
