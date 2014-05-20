@@ -15,7 +15,6 @@
 from __future__ import absolute_import, unicode_literals
 from argparse import ArgumentParser
 from random import SystemRandom
-from string import printable
 import sys
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.exc import OperationalError, ArgumentError
@@ -27,9 +26,6 @@ EXIT_VALS = {
     'db_create_engine': 10,
     'db_connect': 11,
 }
-
-
-B62_ALPHABET = printable[:62]
 
 
 def create_token():
