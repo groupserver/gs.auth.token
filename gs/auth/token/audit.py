@@ -13,24 +13,18 @@
 #
 ##############################################################################
 from __future__ import absolute_import, unicode_literals
-from datetime import datetime
 SUBSYSTEM = 'gs.auth.token'
 from logging import getLogger
 log = getLogger(SUBSYSTEM)
-from zope.component.interfaces import IFactory
-from pytz import UTC
-from zope.interface import implements, implementedBy
-from Products.GSAuditTrail import IAuditEvent, BasicAuditEvent, \
-    AuditQuery
-from Products.XWFCore.XWFUtils import munge_date
-from .createtoken import create_token  # A tiny HACK, but it works.
+from zope.interface import implementedBy
+from Products.GSAuditTrail import BasicAuditEvent, AuditQuery
+from gs.core import curr_time, to_id
 
 UNKNOWN = '0'
 AUTH_FAIL = '1'
 
 
 class AuditEventFactory(object):
-    implements(IFactory)
 
     def __call__(self, context, event_id, code, date,
         userInfo, instanceUserInfo, siteInfo, groupInfo=None,
@@ -52,27 +46,29 @@ class AuditEventFactory(object):
 # AUTH_FAIL       = '1'
 class AuthFailEvent(BasicAuditEvent):
     ''' An audit-trail event representing an authentication failure.'''
-    implements(IAuditEvent)
 
     def __init__(self, context, id, d, siteInfo, pageId):
         BasicAuditEvent.__init__(self, context, id, AUTH_FAIL, d, None, None,
                                  siteInfo, None, pageId, None, SUBSYSTEM)
 
-    def __str__(self):
+    def __unicode__(self):
         retval = 'Authentication failure for the page <%s> on the site %s '\
             '(%s).' % (self.instanceDatum, self.siteInfo.name,
                         self.siteInfo.id)
-        retval = retval.encode('ascii', 'ignore')
+        return retval
+
+    def __str__(self):
+        retval = unicode(self).encode('ascii', 'ignore')
         return retval
 
     @property
     def xhtml(self):
-        cssClass = 'audit-event gs-group-messages-add-%s' % self.code
-        retval = '<span class="%s">Failed authentication '\
-            'for the page <cite>%s</cite> on %s.' % \
-            (cssClass, self.instaceDatum, self.siteInfo.name)
+        cssClass = 'audit-event gs-group-messages-add-{0}'.format(self.code)
+        r = '<span class="{0}">Failed authentication for the page '\
+            '<cite>{1}</cite> on {2}.'
+        retval = r.format(cssClass, self.instaceDatum, self.siteInfo.name)
         retval = '%s (%s)' % \
-          (retval, munge_date(self.context, self.date))
+          (retval, self.date.strftime('%F %T %Z'))
         return retval
 
 
@@ -85,8 +81,8 @@ class Auditor(object):
         self.factory = AuditEventFactory()
 
     def info(self, code, instanceDatum=''):
-        d = datetime.now(UTC)
-        eventId = create_token()
+        d = curr_time()
+        eventId = to_id(code, instanceDatum)
 
         e = self.factory(self.context, eventId, code, d,
                          None, None, self.siteInfo, None,
