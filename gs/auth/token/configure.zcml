@@ -17,7 +17,7 @@
     factory=".interfaces.GSAuthTokenOptionFactory"
     name="gs.auth.token.options" />
 
-  <class class="gs.auth.token.audit.AuditEvent">
+  <class class="gs.auth.token.audit.AuditEventFactory">
     <implements interface="zope.component.interfaces.IFactory" />
   </class>
   <class class="gs.auth.token.audit.AuthFailEvent">
