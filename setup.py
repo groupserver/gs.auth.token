@@ -12,17 +12,35 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+import codecs
 import os
+import sys
 from setuptools import setup, find_packages
 from version import get_version
 
 version = get_version()
 
+with codecs.open('README.txt', encoding='utf-8') as f:
+    long_description = f.read()
+with codecs.open(os.path.join("docs", "HISTORY.txt"), encoding='utf-8') as f:
+    long_description += '\n' + f.read()
+
+requires = [
+        'SQLAlchemy',
+        'zope.component',
+        'zope.interface',
+        'zope.schema',
+        'gs.core',
+        'gs.option',
+        'Products.GSAuditTrail', ],
+
+if (sys.version_info < (3, 4)):
+    requires += ['setuptools']
+
 setup(name='gs.auth.token',
     version=version,
     description="Token authentication for GroupServer",
-    long_description=open("README.txt").read() + "\n" +
-                    open(os.path.join("docs", "HISTORY.txt")).read(),
+    long_description=long_description,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         "Environment :: Web Environment",
@@ -37,17 +55,13 @@ setup(name='gs.auth.token',
     keywords='authentication token database',
     author='Michael JasonSmith',
     author_email='mpj17@onlinegroups.net',
-    url='http://groupserver.org',
+    url='https://source.iopen.net/groupserver/gs.auth.token/',
     license='ZPL 2.1',
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['gs', 'gs.auth', ],
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        'setuptools',
-        'gs.option',
-        'Products.GSAuditTrail',
-    ],
+    install_requires=requires,
     entry_points={
         'console_scripts': [
             'gs_auth_token_create = gs.auth.token.createtoken:main',
