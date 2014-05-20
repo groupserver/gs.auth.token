@@ -1,4 +1,18 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+# Copyright © 2012, 2014 OnlineGroups.net and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+from __future__ import absolute_import, unicode_literals
 from zope.schema import ASCIILine, ValidationError
 from gs.option import ComponentOptions
 
@@ -9,8 +23,8 @@ class AuthenticationTokenMismatch(ValidationError):
         self.value = value
 
     def __unicode__(self):
-        return u'The authentication token "%s" does not match the one '\
-            u'in the database.' % self.value
+        return 'The authentication token "%s" does not match the one '\
+            'in the database.' % self.value
 
     def __str__(self):
         return unicode(self).encode('ascii', 'ignore')

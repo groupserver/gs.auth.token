@@ -1,18 +1,31 @@
-# coding=utf-8
-from pytz import UTC
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+# Copyright © 2012, 2014 OnlineGroups.net and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+from __future__ import absolute_import, unicode_literals
 from datetime import datetime
+SUBSYSTEM = 'gs.auth.token'
+from logging import getLogger
+log = getLogger(SUBSYSTEM)
 from zope.component.interfaces import IFactory
+from pytz import UTC
 from zope.interface import implements, implementedBy
 from Products.GSAuditTrail import IAuditEvent, BasicAuditEvent, \
     AuditQuery
 from Products.XWFCore.XWFUtils import munge_date
-from createtoken import create_token  # A tiny HACK, but it works.
+from .createtoken import create_token  # A tiny HACK, but it works.
 
-SUBSYSTEM = 'gs.auth.token'
-import logging
-log = logging.getLogger(SUBSYSTEM)  #@UndefinedVariable
-
-UNKNOWN   = '0'
+UNKNOWN = '0'
 AUTH_FAIL = '1'
 
 
@@ -46,19 +59,19 @@ class AuthFailEvent(BasicAuditEvent):
                                  siteInfo, None, pageId, None, SUBSYSTEM)
 
     def __str__(self):
-        retval = u'Authentication failure for the page <%s> on the site %s '\
-            u'(%s).' % (self.instanceDatum, self.siteInfo.name,
+        retval = 'Authentication failure for the page <%s> on the site %s '\
+            '(%s).' % (self.instanceDatum, self.siteInfo.name,
                         self.siteInfo.id)
         retval = retval.encode('ascii', 'ignore')
         return retval
 
     @property
     def xhtml(self):
-        cssClass = u'audit-event gs-group-messages-add-%s' % self.code
-        retval = u'<span class="%s">Failed authentication '\
-            u'for the page <cite>%s</cite> on %s.' % \
+        cssClass = 'audit-event gs-group-messages-add-%s' % self.code
+        retval = '<span class="%s">Failed authentication '\
+            'for the page <cite>%s</cite> on %s.' % \
             (cssClass, self.instaceDatum, self.siteInfo.name)
-        retval = u'%s (%s)' % \
+        retval = '%s (%s)' % \
           (retval, munge_date(self.context, self.date))
         return retval
 
