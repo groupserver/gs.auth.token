@@ -12,12 +12,12 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-from __future__ import absolute_import, unicode_literals
+from __future__ import unicode_literals
 import codecs
 import os
 import sys
 from setuptools import setup, find_packages
-from .version import get_version
+from version import get_version
 
 version = get_version()
 
@@ -34,7 +34,6 @@ requires = [
         'gs.core',
         'gs.option',
         'Products.GSAuditTrail', ]
-
 if (sys.version_info < (3, 4)):
     requires += ['setuptools']
 
