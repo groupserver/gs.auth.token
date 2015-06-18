@@ -23,8 +23,8 @@ from gs.core import convert_int2b62
 
 EXIT_VALS = {
     'success': 0,
-    'db_create_engine': 10,
-    'db_connect': 11,
+    'db_create_engine': 1,
+    'db_connect': 2,
 }
 
 
