@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-# Copyright © 2012, 2014 OnlineGroups.net and Contributors.
+# Copyright © 2012, 2014, 2015 OnlineGroups.net and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -60,7 +60,7 @@ def main():
     p = ArgumentParser(description=d, epilog=e)
     p.add_argument('dsn', metavar='dsn',
                    help='The data source name (DSN) in the form '
-                       '"postgres://user:password@host:port/database_name".')
+                        '"postgres://user:password@host:port/database_name".')
     args = p.parse_args()
     try:
         engine = create_engine(args.dsn, echo=False)
