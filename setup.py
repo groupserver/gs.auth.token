@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-# Copyright © 2014 OnlineGroups.net and Contributors.
+# Copyright © 2012, 2013, 2014, 2015 OnlineGroups.net and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -28,13 +28,13 @@ with codecs.open(os.path.join("docs", "HISTORY.rst"), encoding='utf-8') as f:
     long_description += '\n' + f.read()
 
 requires = [
-        'SQLAlchemy',
-        'zope.component',
-        'zope.interface',
-        'zope.schema',
-        'gs.core',
-        'gs.option',
-        'Products.GSAuditTrail', ]
+    'SQLAlchemy',
+    'zope.component',
+    'zope.interface',
+    'zope.schema',
+    'gs.core',
+    'gs.option',
+    'Products.GSAuditTrail', ]
 if (sys.version_info < (3, 4)):
     requires += ['setuptools']
 
@@ -61,7 +61,7 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    keywords='authentication, token, database',
+    keywords='authentication, token, database, hook, web hook',
     author='Michael JasonSmith',
     author_email='mpj17@onlinegroups.net',
     url='https://github.com/groupserver/{0}'.format(name),
@@ -79,4 +79,5 @@ setup(
         },
     test_suite="gs.auth.token.tests.test_all",
     tests_require=['mock', ],
+    extras_require={'docs': ['Sphinx'], },
 )

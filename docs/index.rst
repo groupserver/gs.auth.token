@@ -1,9 +1,5 @@
-=================
-``gs.auth.token``
-=================
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Token authentication for GroupServer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:mod:`gs.auth.token` Documentation
+==================================
 
 :Author: `Michael JasonSmith`_
 :Contact: Michael JasonSmith <mpj17@onlinegroups.net>
@@ -16,22 +12,25 @@ Token authentication for GroupServer
 ..  _Creative Commons Attribution-Share Alike 4.0 International License:
     http://creativecommons.org/licenses/by-sa/4.0/
 
-Introduction
-============
+This product provides the token-authentication system used by
+*web hooks* in GroupServer_. It provides both the script that
+generates new tokens, and the API used to check supplied tokens.
 
-Token-authentication is used to allow server-side scripts to
-access forms in `GroupServer`_. It is the simplest authentication
-method provided by the system:
+Contents:
 
-* You create a token.
-* You add authentication to a form.
-* The token is passed in as part of the ``POST`` request that is
-  made to submit the form.
-* GroupServer checks the token with the one in the database, and
-  throws a validation-error if they do not match.
+.. toctree::
+   :maxdepth: 2
 
-This product provides both the API for checking the token, and
-the ``console_script`` for generating a new token.
+   script
+   api
+   HISTORY
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 Resources
 =========
