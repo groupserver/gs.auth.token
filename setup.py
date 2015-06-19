@@ -19,7 +19,7 @@ import sys
 from setuptools import setup, find_packages
 from version import get_version
 
-name = 'gs.auth.token',
+name = 'gs.auth.token'
 version = get_version()
 
 with codecs.open('README.rst', encoding='utf-8') as f:
