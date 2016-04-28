@@ -36,7 +36,7 @@ Resources
 =========
 
 - Documentation:
-  http://groupserver.readthedocs.org/projects/gsauthtoken
+  http://groupserver.readthedocs.io/projects/gsauthtoken
 - Code repository: https://github.com/groupserver/gs.auth.token/
 - Questions and comments to
   http://groupserver.org/groups/development
